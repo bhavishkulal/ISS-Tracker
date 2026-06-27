@@ -22,16 +22,19 @@ def is_iss_overhead():
     response.raise_for_status()
     data = response.json()
 
-    iss_longitude = data["iss_position"]["longitude"]
-    iss_latitude = data["iss_position"]["latitude"]
+    iss_longitude_raw = data["iss_position"]["longitude"]
+    iss_latitude_raw = data["iss_position"]["latitude"]
+    print(f"ISS raw values: latitude={iss_latitude_raw} ({type(iss_latitude_raw).__name__}), longitude={iss_longitude_raw} ({type(iss_longitude_raw).__name__})")
 
     try:
-        iss_longitude = float(iss_longitude)
-        iss_latitude = float(iss_latitude)
+        iss_longitude = float(iss_longitude_raw)
+        iss_latitude = float(iss_latitude_raw)
     except (TypeError, ValueError):
         raise ValueError(
-            f"ISS position values are invalid: latitude={iss_latitude}, longitude={iss_longitude}"
+            f"ISS position values are invalid: latitude={iss_latitude_raw}, longitude={iss_longitude_raw}"
         )
+
+    print(f"ISS converted values: latitude={iss_latitude} ({type(iss_latitude).__name__}), longitude={iss_longitude} ({type(iss_longitude).__name__})")
 
     if MY_LAT - 5 <= iss_latitude <= MY_LAT + 5 and MY_LONG - 5 <= iss_longitude <= MY_LONG + 5:
         return True
