@@ -1,0 +1,29 @@
+name: ISS Tracker Check
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  iss-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: pip install requests
+    
+    - name: Check ISS position
+      env:
+        MY_EMAIL: ${{ secrets.MY_EMAIL }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        TO_EMAIL: ${{ secrets.TO_EMAIL }}
+        PAVAN_EMAIL: ${{ secrets.PAVAN_EMAIL }}
+      run: python main.py
