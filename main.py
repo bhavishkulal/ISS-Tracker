@@ -17,8 +17,8 @@ def is_iss_overhead():
     response.raise_for_status()
     data = response.json()
 
-    iss_longitude = data["iss_position"]["longitude"]
-    iss_latitude = data["iss_position"]["latitude"]
+    iss_longitude = float(data["iss_position"]["longitude"])
+    iss_latitude = float(data["iss_position"]["latitude"])
 
     if MY_LAT - 5 <= iss_latitude <= MY_LAT + 5 and MY_LONG - 5 <= iss_longitude <= MY_LONG + 5:
         return True
@@ -45,7 +45,7 @@ def is_night():
 
 if is_iss_overhead() and is_night():
     print("ISS is overhead and it's night! Sending notifications...")
-    with smtplib.SMTP("smtp.gmail.com") as connection:
+    with smtplib.SMTP("smtp.gmail.com", 587) as connection:
         connection.starttls()
         connection.login(user=my_email, password=password)
         connection.sendmail(
