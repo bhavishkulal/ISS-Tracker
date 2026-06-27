@@ -22,8 +22,16 @@ def is_iss_overhead():
     response.raise_for_status()
     data = response.json()
 
-    iss_longitude = float(data["iss_position"]["longitude"])
-    iss_latitude = float(data["iss_position"]["latitude"])
+    iss_longitude = data["iss_position"]["longitude"]
+    iss_latitude = data["iss_position"]["latitude"]
+
+    try:
+        iss_longitude = float(iss_longitude)
+        iss_latitude = float(iss_latitude)
+    except (TypeError, ValueError):
+        raise ValueError(
+            f"ISS position values are invalid: latitude={iss_latitude}, longitude={iss_longitude}"
+        )
 
     if MY_LAT - 5 <= iss_latitude <= MY_LAT + 5 and MY_LONG - 5 <= iss_longitude <= MY_LONG + 5:
         return True
@@ -48,6 +56,8 @@ def is_night():
         return True
     return False
 
+print("ISS Tracker starting...")
+
 if is_iss_overhead() and is_night():
     print("ISS is overhead and it's night! Sending notifications...")
     with smtplib.SMTP("smtp.gmail.com", 587) as connection:
@@ -65,3 +75,4 @@ if is_iss_overhead() and is_night():
         )
 else:
     print("ISS is not overhead or it's daytime.")
+
