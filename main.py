@@ -22,19 +22,8 @@ def is_iss_overhead():
     response.raise_for_status()
     data = response.json()
 
-    iss_longitude_raw = data["iss_position"]["longitude"]
-    iss_latitude_raw = data["iss_position"]["latitude"]
-    print(f"ISS raw values: latitude={iss_latitude_raw} ({type(iss_latitude_raw).__name__}), longitude={iss_longitude_raw} ({type(iss_longitude_raw).__name__})")
-
-    try:
-        iss_longitude = float(iss_longitude_raw)
-        iss_latitude = float(iss_latitude_raw)
-    except (TypeError, ValueError):
-        raise ValueError(
-            f"ISS position values are invalid: latitude={iss_latitude_raw}, longitude={iss_longitude_raw}"
-        )
-
-    print(f"ISS converted values: latitude={iss_latitude} ({type(iss_latitude).__name__}), longitude={iss_longitude} ({type(iss_longitude).__name__})")
+    iss_longitude = float(data["iss_position"]["longitude"])
+    iss_latitude = float(data["iss_position"]["latitude"])
 
     if MY_LAT - 5 <= iss_latitude <= MY_LAT + 5 and MY_LONG - 5 <= iss_longitude <= MY_LONG + 5:
         return True
@@ -53,7 +42,7 @@ def is_night():
     sunrise = int(data["results"]["sunrise"].split("T")[1].split(":")[0])
     sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
 
-    time_now = datetime.utcnow().hour
+    time_now = datetime.now().hour
 
     if time_now >= sunset or time_now <= sunrise:
         return True
@@ -78,4 +67,3 @@ if is_iss_overhead() and is_night():
         )
 else:
     print("ISS is not overhead or it's daytime.")
-
