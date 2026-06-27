@@ -8,6 +8,11 @@ password = os.environ.get("EMAIL_PASSWORD")
 to_email = os.environ.get("TO_EMAIL")
 pavanbro_email = os.environ.get("PAVAN_EMAIL")
 
+if not my_email or not password or not to_email or not pavanbro_email:
+    raise EnvironmentError(
+        "MY_EMAIL, EMAIL_PASSWORD, TO_EMAIL, and PAVAN_EMAIL environment variables must be set."
+    )
+
 MY_LAT = 13.117661
 MY_LONG = 77.633218
 
@@ -37,7 +42,7 @@ def is_night():
     sunrise = int(data["results"]["sunrise"].split("T")[1].split(":")[0])
     sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
 
-    time_now = datetime.now().hour
+    time_now = datetime.utcnow().hour
 
     if time_now >= sunset or time_now <= sunrise:
         return True
